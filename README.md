@@ -1,36 +1,256 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+<img src="public/icon.svg" width="80" height="80" alt="CrisisLink Logo" />
 
-First, run the development server:
+# 🚨 CrisisLink — Rapid Crisis Response Platform
+
+**Accelerated Emergency Response & Crisis Coordination in Hospitality**
+
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Firebase](https://img.shields.io/badge/Firebase-Firestore-orange?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
+[![Gemini AI](https://img.shields.io/badge/Gemini-AI-blue?style=for-the-badge&logo=google)](https://ai.google.dev/)
+[![PWA](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://web.dev/progressive-web-apps/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+> Built for the **Google Solution Challenge 2026** 🌍
+> Addressing UN Sustainable Development Goals: **SDG 3** (Good Health), **SDG 11** (Safe Cities), **SDG 16** (Peace & Justice)
+
+[🌐 Live Demo](#) · [📖 Documentation](#getting-started) · [🐛 Report Bug](https://github.com/your-username/crisislink/issues)
+
+</div>
+
+---
+
+## 📌 Problem Statement
+
+Hospitality venues face **unpredictable, high-stakes emergencies** that demand instantaneous, coordinated responses to protect lives and assets. Yet when crises occur, critical information becomes **siloed**—communication fractures between distressed guests, on-site staff, and emergency responders. This fragmentation delays response times, increases confusion, and puts lives at risk.
+
+**CrisisLink** eliminates this breakdown. We bridge the gap between guests, staff, and first responders with real-time intelligence and AI-powered crisis coordination.
+
+---
+
+## 💡 Our Solution
+
+**CrisisLink** is a real-time, web-based emergency coordination platform built for modern hospitality. It provides:
+
+- **Instant Guest Reporting** — Guests report emergencies in 3 steps via mobile, no login required, accessible via QR codes
+- **AI-Powered Triage** — Gemini AI automatically classifies incident severity, suggests response protocols, and estimates response times
+- **Command Center** — Crisis Managers monitor all incidents in real time with live dashboards, staff status, and activity feeds
+- **Staff Mobile Portal** — On-site personnel receive instant alerts, manage assigned tasks, and check zone status
+- **Real-Time Synchronization** — Firebase Firestore powers live data flow across all stakeholders simultaneously
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+|--------|-------------|
+| 🚨 **Guest Reporting** | 3-step emergency wizard, no login needed, accessible via QR code |
+| 🤖 **Gemini AI Analysis** | Auto-classifies severity, suggests actions, estimates response time |
+| 📊 **Command Center** | Real-time dashboard with incidents, staff status & activity feed |
+| 🗺️ **Venue Map** | Interactive floor plan with incident and staff location overlays |
+| 👥 **Staff Management** | Directory with live status, search, filters, and assignment |
+| 📈 **Analytics** | Incident trends, resolution rates, and performance metrics |
+| 📱 **Staff Mobile Portal** | PWA-ready mobile view for on-ground staff |
+| 🔒 **Role-Based Auth** | Firebase Authentication with Manager / Staff / Admin roles |
+| 🌐 **PWA Support** | Installable as a native app on mobile devices |
+| 🔁 **Demo Mode** | Works fully without any API keys using rich mock data |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Next.js 14 (App Router) |
+| **Language** | JavaScript (React) |
+| **Styling** | Vanilla CSS (CSS Modules + Design System) |
+| **Auth** | Firebase Authentication (Email + Google Sign-In) |
+| **Database** | Firebase Firestore (Real-time) |
+| **Storage** | Firebase Storage |
+| **AI** | Google Gemini 2.0 Flash API |
+| **PWA** | next-pwa (Service Workers) |
+| **Font** | Outfit (Google Fonts) |
+
+---
+
+## 📂 Project Structure
+
+```
+crisislink/
+├── public/
+│   ├── manifest.json          # PWA manifest
+│   └── icon.svg               # App icon
+├── src/
+│   ├── app/
+│   │   ├── globals.css        # Global design system & tokens
+│   │   ├── layout.js          # Root layout with AuthProvider
+│   │   ├── page.js            # Landing page
+│   │   ├── login/             # Authentication page
+│   │   ├── report/            # Guest emergency report wizard
+│   │   ├── staff/             # Mobile staff portal
+│   │   └── dashboard/
+│   │       ├── page.js        # Command center overview
+│   │       ├── incidents/     # Incident management
+│   │       ├── map/           # Venue floor plan
+│   │       ├── staff/         # Staff directory
+│   │       └── analytics/     # Analytics & reports
+│   ├── components/
+│   │   ├── Navbar.js          # Navigation bar
+│   │   └── landing/           # Landing page sections
+│   ├── context/
+│   │   └── AuthContext.js     # Firebase Auth context & hooks
+│   ├── hooks/
+│   │   └── useRealtimeData.js # Real-time Firestore hooks
+│   └── lib/
+│       ├── firebase.js        # Firebase initialization
+│       ├── firebaseConfig.js  # Firebase config (uses .env)
+│       ├── firestoreService.js # Firestore CRUD operations
+│       ├── geminiService.js   # Gemini AI integration
+│       └── mockData.js        # Demo/fallback data
+├── .env.example               # Environment variables template
+└── next.config.mjs            # Next.js + PWA config
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ installed ([Download here](https://nodejs.org/))
+- A Google account (for Firebase & Gemini)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/crisislink.git
+cd crisislink
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Set up environment variables
+
+```bash
+cp .env.example .env.local
+```
+
+Open `.env.local` and fill in your API keys (see section below for how to get them):
+
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_key
+```
+
+> 💡 **Skipping this step?** No problem! The app will automatically run in **Demo Mode** with rich mock data. All features will still work for demonstration purposes.
+
+### 4. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser. 🎉
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔑 Getting API Keys
 
-## Learn More
+### Firebase (Free)
+1. Go to [console.firebase.google.com](https://console.firebase.google.com/)
+2. Click **"Add project"** → name it `crisislink`
+3. Go to **Project Settings > General > Your apps > Web app**
+4. Copy the config values into your `.env.local`
+5. Enable **Firestore**, **Authentication** (Email + Google), and **Storage** in the Firebase console
 
-To learn more about Next.js, take a look at the following resources:
+### Gemini AI (Free tier available)
+1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+2. Click **"Create API key"**
+3. Paste it as `NEXT_PUBLIC_GEMINI_API_KEY` in your `.env.local`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📱 Pages & Routes
 
-## Deploy on Vercel
+| Route | Page | Access |
+|-------|------|--------|
+| `/` | Landing Page | Public |
+| `/report` | Guest Emergency Report | Public (QR Code) |
+| `/login` | Staff/Manager Login | Public |
+| `/dashboard` | Command Center Overview | Crisis Manager |
+| `/dashboard/incidents` | Incident Management | Crisis Manager |
+| `/dashboard/map` | Venue Floor Map | Crisis Manager |
+| `/dashboard/staff` | Staff Directory | Crisis Manager |
+| `/dashboard/analytics` | Analytics & Reports | Crisis Manager |
+| `/staff` | Mobile Staff Portal | Staff |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🌐 Deployment (Vercel)
+
+The easiest way to deploy is with [Vercel](https://vercel.com/):
+
+1. Push this repo to GitHub
+2. Go to [vercel.com](https://vercel.com) and import the repo
+3. Add your environment variables in Vercel's dashboard
+4. Click **Deploy** — your app will be live in ~60 seconds!
+
+---
+
+## 🎨 Design System
+
+CrisisLink uses a custom dark-mode design system built in `globals.css`:
+
+- **Font:** Outfit (Google Fonts) — modern, geometric, highly legible
+- **Theme:** Dark glassmorphism with blue/purple accent palette
+- **Colors:** Semantic crisis severity colors (critical → high → medium → low)
+- **Components:** Buttons, Badges, Cards, Inputs — all reusable CSS classes
+- **Animations:** Fade-in, slide, pulse, glow effects for high-stress UI clarity
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Here's how to get started:
+
+1. Fork this repository
+2. Create your feature branch: `git checkout -b feature/AmazingFeature`
+3. Commit your changes: `git commit -m 'Add some AmazingFeature'`
+4. Push to the branch: `git push origin feature/AmazingFeature`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgements
+
+- [Google Solution Challenge 2026](https://developers.google.com/community/gdsc-solution-challenge)
+- [Next.js](https://nextjs.org/) — The React framework
+- [Firebase](https://firebase.google.com/) — Backend & real-time database
+- [Google Gemini AI](https://ai.google.dev/) — AI-powered incident analysis
+- [Vercel](https://vercel.com/) — Deployment platform
+
+---
+
+<div align="center">
+
+Made with ❤️ for the **Google Solution Challenge 2026**
+
+**⭐ Star this repo if you found it helpful!**
+
+</div>
