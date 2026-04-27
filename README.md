@@ -15,7 +15,7 @@
 > Built for the **Google Solution Challenge 2026** 🌍
 > Addressing UN Sustainable Development Goals: **SDG 3** (Good Health), **SDG 11** (Safe Cities), **SDG 16** (Peace & Justice)
 
-[🌐 Live Demo](#) · [📖 Documentation](#getting-started) · [🐛 Report Bug](https://github.com/your-username/crisislink/issues)
+[🌐 Live Demo](https://crisis-link-33b22.web.app) · [📖 Documentation](#getting-started) · [🐛 Report Bug](https://github.com/sanant456/CrisisLink/issues)
 
 </div>
 
@@ -196,14 +196,24 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. 🎉
 
 ---
 
-## 🌐 Deployment (Vercel)
+## 🌐 Deployment (Firebase Hosting)
 
-The easiest way to deploy is with [Vercel](https://vercel.com/):
+The project is configured for free static deployment via **Firebase Hosting**:
 
-1. Push this repo to GitHub
-2. Go to [vercel.com](https://vercel.com) and import the repo
-3. Add your environment variables in Vercel's dashboard
-4. Click **Deploy** — your app will be live in ~60 seconds!
+1. Authenticate with Firebase CLI:
+   ```bash
+   firebase login
+   ```
+2. Build the static export (outputs to `out/`):
+   ```bash
+   npm run build
+   ```
+3. Deploy to Firebase:
+   ```bash
+   firebase deploy --only hosting
+   ```
+   
+Your app will be live globally on a `.web.app` domain in seconds!
 
 ---
 
