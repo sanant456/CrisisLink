@@ -4,12 +4,14 @@ const withPWA = nextPWA({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development', // Disable in dev mode to avoid sw caching issues
+  disable: process.env.NODE_ENV === 'development',
 });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  output: 'standalone', // Required for Cloud Run Docker deployment
+  turbopack: {},        // Silence Turbopack/webpack conflict from next-pwa
 };
 
 export default withPWA(nextConfig);
+
