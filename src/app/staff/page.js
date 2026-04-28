@@ -2,14 +2,24 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
-import { mockIncidents, getTypeIcon, getSeverityColor, getStatusLabel } from '@/lib/mockData';
+import { useAuth } from '@/context/AuthContext';
+import { useIncidents } from '@/hooks/useRealtimeData';
+import { assignStaffToIncident, updateIncidentStatus, updateStaffStatus } from '@/lib/firestoreService';
+import { getTypeIcon, getSeverityColor, getStatusLabel } from '@/lib/mockData';
 
 export default function StaffPortal() {
+  const { user, userProfile, loading: authLoading } = useAuth();
+  const { incidents, loading: incLoading } = useIncidents();
   const [tab, setTab] = useState('alerts');
   const [expandedId, setExpandedId] = useState(null);
 
-  const myTasks = mockIncidents.filter(i => i.assignedStaff.includes('STF-003'));
-  const allAlerts = mockIncidents.filter(i => i.status !== 'resolved');
+  const staffId = user?.uid || 'STF-003';
+  const myTasks = incidents.filter(i => i.assignedStaff?.includes(staffId));
+  const allAlerts = incidents.filter(i => i.status !== 'resolved');
+
+  if (authLoading || incLoading) {
+    return <div className={styles.loading}>Loading Staff Portal...</div>;
+  }
 
   return (
     <div className={styles.page}>
@@ -25,11 +35,11 @@ export default function StaffPortal() {
           <div className={styles.headerAvatar}>🧑‍🚒</div>
         </div>
         <div className={styles.staffInfo}>
-          <div className={styles.staffName}>Mike Thompson</div>
-          <div className={styles.staffRole}>Fire Safety • Floor 1, Kitchen Wing</div>
+          <div className={styles.staffName}>{userProfile?.name || 'Staff Member'}</div>
+          <div className={styles.staffRole}>{userProfile?.department || 'Emergency Response'} • {userProfile?.zone || 'All Zones'}</div>
           <div className={styles.staffStatus}>
-            <span className={styles.statusDot} />
-            On Duty — Responding
+            <span className={styles.statusDot} style={{background: userProfile?.status === 'responding' ? 'var(--crisis-high)' : 'var(--crisis-low)'}} />
+            On Duty — {userProfile?.status || 'available'}
           </div>
         </div>
       </div>
@@ -101,7 +111,13 @@ export default function StaffPortal() {
                     </div>
 
                     <div className={styles.alertActions}>
-                      <button className="btn btn-primary btn-sm" style={{flex: 1}}>Accept & Respond</button>
+                      <button 
+                        className="btn btn-primary btn-sm" 
+                        style={{flex: 1}}
+                        onClick={() => assignStaffToIncident(incident.id, user.uid, userProfile.name)}
+                      >
+                        Accept & Respond
+                      </button>
                       <button className="btn btn-ghost btn-sm">Escalate</button>
                     </div>
                   </div>
@@ -132,7 +148,16 @@ export default function StaffPortal() {
                     📍 {task.location.building}, Floor {task.location.floor}, {task.location.zone}
                   </div>
                   <div className={styles.taskActions}>
-                    <button className="btn btn-primary btn-sm" style={{flex: 1}}>Mark Complete</button>
+                    <button 
+                      className="btn btn-primary btn-sm" 
+                      style={{flex: 1}}
+                      onClick={() => {
+                        updateIncidentStatus(task.id, 'resolved');
+                        updateStaffStatus(user.uid, 'available');
+                      }}
+                    >
+                      Mark Complete
+                    </button>
                     <button className="btn btn-ghost btn-sm" style={{flex: 1}}>Update Status</button>
                   </div>
                 </div>

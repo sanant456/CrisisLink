@@ -165,10 +165,22 @@ export default function DashboardOverview() {
                 <div key={inc.id || idx} className={styles.aiCard}>
                   <div className={styles.aiCardIcon}>{inc.severity === 'critical' ? '🔴' : '⚠️'}</div>
                   <div className={styles.aiCardContent}>
-                    <div className={styles.aiCardTitle}>AI Insight: {inc.title}</div>
+                    <div className={styles.aiCardTitle}>
+                      AI Insight: {inc.title}
+                      {inc.aiAnalysis.priority_score && (
+                        <span className={styles.priorityBadge}>P{inc.aiAnalysis.priority_score}</span>
+                      )}
+                    </div>
                     <div className={styles.aiCardDesc}>
                       {inc.aiAnalysis.recommended_action || inc.aiAnalysis.summary}
                     </div>
+                    {inc.aiAnalysis.vision_analysis && (
+                      <div className={styles.visionTags}>
+                        {inc.aiAnalysis.vision_analysis.detected_objects?.map((obj, i) => (
+                          <span key={i} className={styles.visionTag}>👁️ {obj}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

@@ -1,0 +1,28 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '--build-arg', 'NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyAEngZUK2hmcrAYTmXN-wR-Q8qlKCdM5F0',
+    '--build-arg', 'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=crisis-link-33b22.firebaseapp.com',
+    '--build-arg', 'NEXT_PUBLIC_FIREBASE_PROJECT_ID=crisis-link-33b22',
+    '--build-arg', 'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=crisis-link-33b22.firebasestorage.app',
+    '--build-arg', 'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=907372564377',
+    '--build-arg', 'NEXT_PUBLIC_FIREBASE_APP_ID=1:907372564377:web:f9ae00a5ae605858854d08',
+    '--build-arg', 'NEXT_PUBLIC_GEMINI_API_KEY=AIzaSyCSHNNL0E7PnG4Rag3oQCP8LdRrQDD6HPU',
+    '-t', 'gcr.io/$PROJECT_ID/crisislink',
+    '.'
+  ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/crisislink']
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: [
+    'run', 'deploy', 'crisislink',
+    '--image', 'gcr.io/$PROJECT_ID/crisislink',
+    '--region', 'us-central1',
+    '--platform', 'managed',
+    '--allow-unauthenticated',
+    '--set-env-vars', 'GEMINI_API_KEY=AIzaSyCSHNNL0E7PnG4Rag3oQCP8LdRrQDD6HPU'
+  ]
+images:
+- 'gcr.io/$PROJECT_ID/crisislink'

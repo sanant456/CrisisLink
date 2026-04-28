@@ -573,3 +573,107 @@
   50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
+
+.imageUpload {
+  margin-top: var(--space-2);
+}
+
+.uploadBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  background: var(--bg-tertiary);
+  border: 2px dashed var(--border-default);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.uploadBox:hover {
+  border-color: var(--accent-blue);
+  background: var(--bg-elevated);
+}
+
+.uploadIcon {
+  font-size: 1.5rem;
+}
+
+.uploadHint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.previewContainer {
+  position: relative;
+  width: 100%;
+  max-width: 200px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+}
+
+.preview {
+  width: 100%;
+  display: block;
+}
+
+.removeImg {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 24px;
+  height: 24px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.removeImg:hover {
+  background: rgba(0,0,0,0.8);
+}
+
+.priorityLabel {
+  font-size: var(--text-xs);
+  color: var(--crisis-critical);
+  font-weight: 700;
+  padding: 2px 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 4px;
+}
+
+.visionFindings {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.visionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.visionTag {
+  font-size: 11px;
+  background: var(--bg-tertiary);
+  color: var(--accent-blue);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}

@@ -17,6 +17,18 @@ export default function ReportPage() {
   const [aiResult, setAiResult] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
 
   const toggleVoiceInput = () => {
     if (typeof window === 'undefined') return;
@@ -48,6 +60,20 @@ export default function ReportPage() {
   };
 
   const handleSubmit = async () => {
+    const fetchWithRetry = async (url, options, retries = 3, backoff = 1000) => {
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+        return response;
+      } catch (err) {
+        if (retries > 0) {
+          await new Promise(resolve => setTimeout(resolve, backoff));
+          return fetchWithRetry(url, options, retries - 1, backoff * 2);
+        }
+        throw err;
+      }
+    };
+
     const id = `INC-${String(Math.floor(Math.random() * 9000) + 1000)}`;
     setIncidentId(id);
     setSubmitted(true);
@@ -57,10 +83,13 @@ export default function ReportPage() {
       const locationStr = `${location.floor || 'Unknown floor'}, ${location.room || 'Unknown room'}`;
       const fullDesc = `Type: ${selectedType}. ${description}. Location: ${locationStr}`;
       
-      const response = await fetch('/api/ai/analyze', {
+      const formData = new FormData();
+      formData.append('description', fullDesc);
+      if (image) formData.append('image', image);
+      
+      const response = await fetch('/api/ai/analyze-incident', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: fullDesc })
+        body: formData
       });
       
       let analysis = null;
@@ -164,21 +193,34 @@ export default function ReportPage() {
             {/* AI Analysis Results */}
             {aiResult && (
               <div className={styles.aiResults}>
-                <h3>🤖 Gemini AI Analysis</h3>
+                <h3>🤖 Gemini Intelligence</h3>
                 <div className={styles.aiSeverity}>
-                  <span className={`badge badge-${aiResult.severity}`}>{aiResult.severity}</span>
-                  <span className={styles.aiConfidence}>Confidence: {Math.round((aiResult.confidence || 0) * 100)}%</span>
+                  <span className={`badge badge-${aiResult.severity}`}>{aiResult.severity.toUpperCase()}</span>
+                  {aiResult.priority_score && (
+                    <span className={styles.priorityLabel}>Priority: {aiResult.priority_score}/10</span>
+                  )}
+                  {aiResult.vision_analysis?.confidence_score && (
+                    <span className={styles.aiConfidence}>Confidence: {aiResult.vision_analysis.confidence_score}%</span>
+                  )}
                 </div>
                 <p className={styles.aiSummary}>{aiResult.summary}</p>
+                
+                {aiResult.vision_analysis?.detected_objects?.length > 0 && (
+                  <div className={styles.visionFindings}>
+                    <strong>Visual Detections:</strong>
+                    <div className={styles.visionTags}>
+                      {aiResult.vision_analysis.detected_objects.map((obj, i) => (
+                        <span key={i} className={styles.visionTag}>👁️ {obj}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className={styles.aiActions}>
-                  <strong>Suggested Actions:</strong>
-                  <ul>
-                    {aiResult.suggestedActions?.map((action, i) => (
-                      <li key={i}>{action}</li>
-                    ))}
-                  </ul>
+                  <strong>Recommended Action:</strong>
+                  <p>{aiResult.recommended_action}</p>
                 </div>
-                <div className={styles.aiEta}>⏱️ Est. Response: {aiResult.estimatedResponseTime}</div>
+                <div className={styles.aiEta}>⏱️ AI Priority Level: {aiResult.priority_score >= 8 ? 'URGENT' : 'Standard'}</div>
               </div>
             )}
             {analyzing && (
@@ -295,6 +337,25 @@ export default function ReportPage() {
                   </button>
                 </div>
                 {isListening && <p className={styles.voiceHint}>Listening... Speak clearly into your microphone.</p>}
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.fieldLabel}>Visual Evidence (Optional)</label>
+                <div className={styles.imageUpload}>
+                  {imagePreview ? (
+                    <div className={styles.previewContainer}>
+                      <img src={imagePreview} alt="Preview" className={styles.preview} />
+                      <button className={styles.removeImg} onClick={() => { setImage(null); setImagePreview(null); }}>✕</button>
+                    </div>
+                  ) : (
+                    <label className={styles.uploadBox}>
+                      <input type="file" accept="image/*" onChange={handleImageChange} className={styles.hiddenInput} />
+                      <span className={styles.uploadIcon}>📷</span>
+                      <span>Upload Image</span>
+                      <span className={styles.uploadHint}>Detects fire, smoke, and hazards</span>
+                    </label>
+                  )}
+                </div>
               </div>
 
               <div className={styles.fieldRow}>
