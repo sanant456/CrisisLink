@@ -1,7 +1,6 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { ImageAnnotatorClient } from '@google-cloud/vision';
+import { VertexAI } from '@google-cloud/vertexai';
 import { NextResponse } from 'next/server';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY);
 
 export async function POST(req) {
   try {
@@ -13,63 +12,92 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Description is required' }, { status: 400 });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Initialize SDKs inside the handler to avoid build-time errors
+    const visionClient = new ImageAnnotatorClient();
+    const vertex_ai = new VertexAI({ 
+      project: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'crisis-link-33b22', 
+      location: 'us-central1' 
+    });
 
-    let prompt = `
-      You are an advanced emergency response AI. Analyze this incident.
-      
-      TEXT DESCRIPTION: "${description}"
-      
-      If an image is provided, analyze it for:
-      - Fire or smoke
-      - Injured persons
-      - Crowd density and panic
-      
-      Respond with ONLY a raw JSON object:
-      {
-        "severity": "critical | medium | low",
-        "summary": "Short AI-generated summary",
-        "recommended_action": "Steps for responders",
-        "priority_score": 1-10,
-        "vision_analysis": {
-          "detected_objects": ["fire", "person", etc],
-          "risk_level": "high | medium | low",
-          "confidence_score": 0-100
-        }
-      }
-      
-      CRITICAL LOGIC: If you detect fire, smoke, or a life-threatening medical emergency in either the text or the image, the severity MUST be "critical" and priority_score MUST be 9 or 10.
-    `;
+    let visionResults = {
+      detected_objects: [],
+      risk_level: 'low',
+      confidence_score: 0
+    };
 
-    let result;
+    // --- STEP 1: OFFICIAL VISION AI INTEGRATION ---
     if (imageFile) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const imagePart = {
-        inlineData: {
-          data: buffer.toString('base64'),
-          mimeType: imageFile.type
-        }
-      };
-      result = await model.generateContent([prompt, imagePart]);
-    } else {
-      result = await model.generateContent(prompt);
+      const [result] = await visionClient.annotateImage({
+        image: { content: buffer.toString('base64') },
+        features: [
+          { type: 'LABEL_DETECTION' },
+          { type: 'OBJECT_LOCALIZATION' },
+          { type: 'SAFE_SEARCH_DETECTION' }
+        ],
+      });
+
+      const labels = result.labelAnnotations || [];
+      const objects = result.localizedObjectAnnotations || [];
+      
+      visionResults.detected_objects = [
+        ...new Set([
+          ...labels.filter(l => l.score > 0.7).map(l => l.description.toLowerCase()),
+          ...objects.filter(o => o.score > 0.7).map(o => o.name.toLowerCase())
+        ])
+      ];
+
+      const hazards = ['fire', 'smoke', 'flame', 'blood', 'injury', 'accident', 'crowd', 'panic'];
+      const foundHazards = visionResults.detected_objects.filter(obj => hazards.includes(obj));
+      
+      if (foundHazards.length > 0) visionResults.risk_level = 'high';
+      visionResults.confidence_score = Math.round((labels[0]?.score || 0) * 100);
     }
 
-    const responseText = result.response.text().trim();
+    // --- STEP 2: OFFICIAL VERTEX AI (GEMINI) INTEGRATION ---
+    const generativeModel = vertex_ai.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+    });
+
+    const prompt = `
+      You are an expert crisis response system.
+      TEXT DESCRIPTION: "${description}"
+      VISION AI FINDINGS: ${JSON.stringify(visionResults.detected_objects)}
+      
+      Analyze the combined data and respond with ONLY a raw JSON object:
+      {
+        "severity": "critical" | "medium" | "low",
+        "summary": "AI-generated summary",
+        "recommended_action": "Responder steps",
+        "priority_score": 1-10
+      }
+      
+      LOGIC: If Vision AI found hazards, factor this into severity.
+    `;
+
+    const response = await generativeModel.generateContent(prompt);
+    const responseText = response.response.candidates[0].content.parts[0].text.trim();
     const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
     
-    let parsedData;
+    let aiAnalysis;
     try {
-      parsedData = JSON.parse(cleanJson);
-    } catch (parseError) {
-      console.error('Failed to parse AI response:', cleanJson);
-      return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 });
+      aiAnalysis = JSON.parse(cleanJson);
+    } catch (e) {
+      aiAnalysis = {
+        severity: visionResults.risk_level === 'high' ? 'critical' : 'medium',
+        summary: description,
+        recommended_action: "Investigate immediate area.",
+        priority_score: visionResults.risk_level === 'high' ? 9 : 5
+      };
     }
 
-    return NextResponse.json(parsedData);
+    return NextResponse.json({
+      ...aiAnalysis,
+      vision_analysis: visionResults
+    });
 
   } catch (error) {
-    console.error('Advanced AI Analysis Error:', error);
+    console.error('Vertex AI / Vision AI Error:', error);
     return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
   }
 }

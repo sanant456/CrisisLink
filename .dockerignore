@@ -5,7 +5,6 @@ node_modules
 .git
 .gitignore
 *.md
-.env
 .env.local
 .env.*.local
 npm-debug.log*

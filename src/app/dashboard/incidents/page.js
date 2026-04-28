@@ -1,13 +1,22 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
+import { useIncidents } from '@/hooks/useRealtimeData';
 import { mockIncidents, getTypeIcon, getSeverityColor, getStatusLabel } from '@/lib/mockData';
 
 export default function IncidentsPage() {
+  const { incidents, loading } = useIncidents();
   const [filter, setFilter] = useState('all');
-  const [selectedIncident, setSelectedIncident] = useState(mockIncidents[0]);
+  const [selectedIncident, setSelectedIncident] = useState(null);
 
-  const filtered = filter === 'all' ? mockIncidents : mockIncidents.filter(i => i.severity === filter);
+  const displayIncidents = incidents.length > 0 ? incidents : mockIncidents;
+  const filtered = filter === 'all' ? displayIncidents : displayIncidents.filter(i => i.severity === filter);
+
+  useEffect(() => {
+    if (!selectedIncident && filtered.length > 0) {
+      setSelectedIncident(filtered[0]);
+    }
+  }, [filtered, selectedIncident]);
 
   return (
     <div className={styles.page}>
@@ -91,42 +100,44 @@ export default function IncidentsPage() {
               </div>
               <div className={styles.infoItem}>
                 <div className={styles.infoLabel}>Reported By</div>
-                <div className={styles.infoValue}>{selectedIncident.reportedBy.name}</div>
+                <div className={styles.infoValue}>{(selectedIncident.reporter || selectedIncident.reportedBy)?.name || 'Anonymous'}</div>
               </div>
               <div className={styles.infoItem}>
                 <div className={styles.infoLabel}>Staff Assigned</div>
-                <div className={styles.infoValue}>{selectedIncident.assignedStaff.length} personnel</div>
+                <div className={styles.infoValue}>{selectedIncident.assignedStaff?.length || 0} personnel</div>
               </div>
               <div className={styles.infoItem}>
                 <div className={styles.infoLabel}>Contact</div>
-                <div className={styles.infoValue}>{selectedIncident.reportedBy.phone}</div>
+                <div className={styles.infoValue}>{(selectedIncident.reporter || selectedIncident.reportedBy)?.phone || 'N/A'}</div>
               </div>
             </div>
 
             {/* AI Analysis */}
-            <div className={styles.aiSection}>
-              <h3 className={styles.sectionTitle}>🤖 Gemini AI Analysis</h3>
-              <div className={styles.aiSummary}>
-                <div className={styles.aiConfidence}>
-                  Confidence: <strong>{Math.round(selectedIncident.aiAnalysis.confidence * 100)}%</strong>
+            {selectedIncident.aiAnalysis && (
+              <div className={styles.aiSection}>
+                <h3 className={styles.sectionTitle}>🤖 Gemini AI Analysis</h3>
+                <div className={styles.aiSummary}>
+                  <div className={styles.aiConfidence}>
+                    Confidence: <strong>{selectedIncident.aiAnalysis.confidence ? Math.round(selectedIncident.aiAnalysis.confidence * 100) : 'High'}%</strong>
+                  </div>
+                  <p className={styles.aiText}>{selectedIncident.aiAnalysis.summary}</p>
                 </div>
-                <p className={styles.aiText}>{selectedIncident.aiAnalysis.summary}</p>
+                <div className={styles.aiActions}>
+                  <h4>Suggested Actions:</h4>
+                  <ul>
+                    {selectedIncident.aiAnalysis.suggestedActions?.map((action, i) => (
+                      <li key={i}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" strokeWidth="2">
+                          <polyline points="9 11 12 14 22 4"/>
+                          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                        {action}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <div className={styles.aiActions}>
-                <h4>Suggested Actions:</h4>
-                <ul>
-                  {selectedIncident.aiAnalysis.suggestedActions.map((action, i) => (
-                    <li key={i}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" strokeWidth="2">
-                        <polyline points="9 11 12 14 22 4"/>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-                      </svg>
-                      {action}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            )}
 
             {/* Timeline */}
             <div className={styles.timelineSection}>

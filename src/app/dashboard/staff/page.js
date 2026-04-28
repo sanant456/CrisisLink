@@ -1,28 +1,32 @@
 'use client';
 import { useState } from 'react';
 import styles from './page.module.css';
+import { useStaff } from '@/hooks/useRealtimeData';
 import { mockStaff } from '@/lib/mockData';
 
 export default function StaffPage() {
+  const { staff: realStaff, loading } = useStaff();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
 
-  const filtered = mockStaff.filter(s => {
+  const displayStaff = realStaff.length > 0 ? realStaff : mockStaff;
+
+  const filtered = displayStaff.filter(s => {
     const matchesFilter = filter === 'all' || s.status === filter;
-    const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase()) || 
-                          s.department.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = (s.name || '').toLowerCase().includes(search.toLowerCase()) || 
+                          (s.department || '').toLowerCase().includes(search.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
-  const available = mockStaff.filter(s => s.status === 'available').length;
-  const responding = mockStaff.filter(s => s.status === 'responding').length;
+  const available = displayStaff.filter(s => s.status === 'available').length;
+  const responding = displayStaff.filter(s => s.status === 'responding').length;
 
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.pageTitle}>Staff Management</h1>
-          <p className={styles.pageSubtitle}>{mockStaff.length} total staff • {responding} responding • {available} available</p>
+          <p className={styles.pageSubtitle}>{displayStaff.length} total staff • {responding} responding • {available} available</p>
         </div>
         <button className="btn btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -37,7 +41,7 @@ export default function StaffPage() {
       {/* Quick Stats */}
       <div className={styles.quickStats}>
         <div className={styles.quickStat}>
-          <div className={styles.qsValue} style={{color: 'var(--accent-blue)'}}>{mockStaff.length}</div>
+          <div className={styles.qsValue} style={{color: 'var(--accent-blue)'}}>{displayStaff.length}</div>
           <div className={styles.qsLabel}>Total Staff</div>
         </div>
         <div className={styles.quickStat}>

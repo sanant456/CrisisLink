@@ -11,7 +11,7 @@
 set -e
 
 # ---- CONFIG (edit these) ----
-PROJECT_ID="crisislink"          # your GCP project ID
+PROJECT_ID="crisis-link-33b22"          # your GCP project ID
 SERVICE_NAME="crisislink"
 REGION="us-central1"
 IMAGE="gcr.io/$PROJECT_ID/$SERVICE_NAME"

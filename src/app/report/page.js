@@ -16,6 +16,7 @@ export default function ReportPage() {
   const [incidentId, setIncidentId] = useState('');
   const [aiResult, setAiResult] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [locating, setLocating] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -98,6 +99,24 @@ export default function ReportPage() {
         setAiResult(analysis);
       }
       
+      // Get Live GPS Location
+      let liveLat = null;
+      let liveLng = null;
+      if (navigator.geolocation) {
+        setLocating(true);
+        try {
+          const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 });
+          });
+          liveLat = position.coords.latitude;
+          liveLng = position.coords.longitude;
+        } catch (geoErr) {
+          console.warn("Geolocation failed or denied:", geoErr);
+        } finally {
+          setLocating(false);
+        }
+      }
+      
       // Save to Firestore
       const incidentData = {
         type: selectedType,
@@ -106,7 +125,9 @@ export default function ReportPage() {
         location: {
           building: 'Main',
           floor: location.floor || 'Unknown',
-          room: location.room || 'Unknown'
+          room: location.room || 'Unknown',
+          lat: liveLat,
+          lng: liveLng
         },
         reporter: {
           name: name || 'Anonymous',
@@ -226,7 +247,7 @@ export default function ReportPage() {
             {analyzing && (
               <div className={styles.aiLoading}>
                 <div className={styles.spinner} />
-                <span>Gemini AI is analyzing the incident...</span>
+                <span>{locating ? '📡 Capturing live location...' : '🤖 Gemini AI is analyzing the incident...'}</span>
               </div>
             )}
 

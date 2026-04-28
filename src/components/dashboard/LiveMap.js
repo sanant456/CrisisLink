@@ -21,7 +21,12 @@ export default function LiveMap({ incidents = [], staff = [] }) {
 
   const [selectedIncident, setSelectedIncident] = useState(null);
 
-  const center = useMemo(() => defaultCenter, []);
+  const center = useMemo(() => {
+    if (incidents.length > 0 && incidents[0].location?.lat && incidents[0].location?.lng) {
+      return { lat: incidents[0].location.lat, lng: incidents[0].location.lng };
+    }
+    return defaultCenter;
+  }, [incidents]);
 
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div style={{ height: '400px', background: '#1e1e1e', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Map...</div>;
@@ -48,9 +53,12 @@ export default function LiveMap({ incidents = [], staff = [] }) {
     >
       {/* Incident Markers */}
       {incidents.map((incident) => {
-        // Mock coordinates based on center if missing
-        const lat = incident.lat || center.lat + (Math.random() - 0.5) * 0.02;
-        const lng = incident.lng || center.lng + (Math.random() - 0.5) * 0.02;
+        // Use exact coordinates from Firestore if available
+        const lat = incident.location?.lat;
+        const lng = incident.location?.lng;
+
+        // Only plot if coordinates exist to prevent stacking all on default center
+        if (!lat || !lng) return null;
 
         return (
           <Marker
@@ -68,8 +76,8 @@ export default function LiveMap({ incidents = [], staff = [] }) {
       {selectedIncident && (
         <InfoWindow
           position={{
-            lat: selectedIncident.lat || center.lat,
-            lng: selectedIncident.lng || center.lng,
+            lat: selectedIncident.location?.lat || center.lat,
+            lng: selectedIncident.location?.lng || center.lng,
           }}
           onCloseClick={() => setSelectedIncident(null)}
         >

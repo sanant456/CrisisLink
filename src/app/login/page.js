@@ -7,25 +7,32 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, signInWithGoogle, signInWithGithub, demoLogin, isDemo } = useAuth();
+  const { signIn, signInWithGoogle, signInWithGithub, signUp } = useAuth();
+  const [isLogin, setIsLogin] = useState(true);
+  
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('crisis_manager');
+  const [role, setRole] = useState('staff');
+  
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      await signIn(email || 'demo@grandhorizon.com', password || 'demo123');
+      if (isLogin) {
+        await signIn(email, password);
+      } else {
+        await signUp(email, password, { name, role });
+      }
       navigateByRole(role);
     } catch (err) {
-      // If Firebase auth fails, fall back to demo mode
-      demoLogin(role);
-      navigateByRole(role);
+      console.error("Auth error:", err);
+      setError(err.message || 'Authentication failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -38,9 +45,8 @@ export default function LoginPage() {
       await signInWithGoogle();
       navigateByRole(role);
     } catch (err) {
-      // Fall back to demo
-      demoLogin(role);
-      navigateByRole(role);
+      console.error("Google auth error:", err);
+      setError(err.message || 'Google sign-in failed.');
     } finally {
       setLoading(false);
     }
@@ -53,9 +59,8 @@ export default function LoginPage() {
       await signInWithGithub();
       navigateByRole(role);
     } catch (err) {
-      // Fall back to demo
-      demoLogin(role);
-      navigateByRole(role);
+      console.error("Github auth error:", err);
+      setError(err.message || 'GitHub sign-in failed.');
     } finally {
       setLoading(false);
     }
@@ -109,33 +114,78 @@ export default function LoginPage() {
 
       <div className={styles.right}>
         <div className={styles.formCard}>
-          <h2 className={styles.formTitle}>Welcome back</h2>
-          <p className={styles.formSubtitle}>Sign in to your CrisisLink account</p>
+          <h2 className={styles.formTitle}>{isLogin ? 'Welcome back' : 'Create an Account'}</h2>
+          <p className={styles.formSubtitle}>
+            {isLogin ? 'Sign in to your CrisisLink account' : 'Join the CrisisLink platform'}
+          </p>
 
           {error && <div className={styles.error}>{error}</div>}
 
-          <form onSubmit={handleLogin} className={styles.form}>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            {!isLogin && (
+              <div className={styles.field}>
+                <label className={styles.label}>Full Name</label>
+                <input 
+                  type="text" 
+                  className="input" 
+                  placeholder="John Doe" 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} 
+                  required={!isLogin} 
+                />
+              </div>
+            )}
+            
             <div className={styles.field}>
               <label className={styles.label}>Role</label>
               <select className="input" value={role} onChange={(e) => setRole(e.target.value)}>
+                <option value="staff">Staff Member</option>
                 <option value="crisis_manager">Crisis Manager</option>
                 <option value="admin">Administrator</option>
-                <option value="staff">Staff Member</option>
                 <option value="responder">First Responder</option>
               </select>
             </div>
+            
             <div className={styles.field}>
               <label className={styles.label}>Email</label>
-              <input type="email" className="input" placeholder="you@grandhorizon.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input 
+                type="email" 
+                className="input" 
+                placeholder="you@example.com" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+              />
             </div>
+            
             <div className={styles.field}>
               <label className={styles.label}>Password</label>
-              <input type="password" className="input" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <input 
+                type="password" 
+                className="input" 
+                placeholder="••••••••" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+              />
             </div>
+            
             <button type="submit" className="btn btn-primary btn-lg" style={{width: '100%'}} disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? (isLogin ? 'Signing in...' : 'Creating account...') : (isLogin ? 'Sign In' : 'Sign Up')}
               {!loading && <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>}
             </button>
+            
+            <div className={styles.toggleText} style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.875rem' }}>
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              <button 
+                type="button" 
+                onClick={() => setIsLogin(!isLogin)}
+                style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                {isLogin ? 'Sign Up' : 'Sign In'}
+              </button>
+            </div>
+
             <div className={styles.divider}><span>or continue with</span></div>
             <button type="button" className={`btn btn-ghost btn-lg ${styles.googleBtn}`} onClick={handleGoogleSignIn} disabled={loading} style={{marginBottom: '12px'}}>
               <svg width="18" height="18" viewBox="0 0 24 24">
@@ -153,7 +203,6 @@ export default function LoginPage() {
               Sign in with GitHub
             </button>
           </form>
-          <p className={styles.demoNote}>💡 Demo Mode: Click Sign In with any credentials to explore</p>
         </div>
       </div>
     </div>

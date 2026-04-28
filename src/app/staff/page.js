@@ -1,10 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useAuth } from '@/context/AuthContext';
 import { useIncidents } from '@/hooks/useRealtimeData';
-import { assignStaffToIncident, updateIncidentStatus, updateStaffStatus } from '@/lib/firestoreService';
+import { assignStaffToIncident, updateIncidentStatus, updateStaffStatus, logActivity } from '@/lib/firestoreService';
+import { requestForToken } from '@/lib/messaging';
 import { getTypeIcon, getSeverityColor, getStatusLabel } from '@/lib/mockData';
 
 export default function StaffPortal() {
@@ -12,10 +13,68 @@ export default function StaffPortal() {
   const { incidents, loading: incLoading } = useIncidents();
   const [tab, setTab] = useState('alerts');
   const [expandedId, setExpandedId] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.uid) {
+      requestForToken(user.uid);
+    }
+  }, [user]);
 
   const staffId = user?.uid || 'STF-003';
   const myTasks = incidents.filter(i => i.assignedStaff?.includes(staffId));
   const allAlerts = incidents.filter(i => i.status !== 'resolved');
+
+  const handleRespond = async (incidentId) => {
+    if (!user) return;
+    setActionLoading(true);
+    try {
+      await assignStaffToIncident(incidentId, user.uid, userProfile?.name || 'Staff');
+      await logActivity({
+        type: 'dispatch',
+        event: `${userProfile?.name || 'Staff'} responded to incident ${incidentId}`,
+        incidentId
+      });
+      setTab('tasks');
+    } catch (err) {
+      console.error("Response error:", err);
+      alert("Failed to assign incident. Please try again.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleComplete = async (incidentId) => {
+    if (!user) return;
+    setActionLoading(true);
+    try {
+      await updateIncidentStatus(incidentId, 'resolved');
+      await updateStaffStatus(user.uid, 'available');
+      await logActivity({
+        type: 'resolve',
+        event: `${userProfile?.name || 'Staff'} resolved incident ${incidentId}`,
+        incidentId
+      });
+    } catch (err) {
+      console.error("Resolution error:", err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleZoneCheck = async (zone, status) => {
+    if (!user) return;
+    try {
+      await logActivity({
+        type: status === 'safe' ? 'update' : 'alert',
+        event: `Zone Check: ${zone} marked as ${status.toUpperCase()} by ${userProfile?.name}`,
+        staffId: user.uid
+      });
+      alert(`${zone} status updated to ${status}.`);
+    } catch (err) {
+      console.error("Check-in error:", err);
+    }
+  };
 
   if (authLoading || incLoading) {
     return <div className={styles.loading}>Loading Staff Portal...</div>;
@@ -114,9 +173,10 @@ export default function StaffPortal() {
                       <button 
                         className="btn btn-primary btn-sm" 
                         style={{flex: 1}}
-                        onClick={() => assignStaffToIncident(incident.id, user.uid, userProfile.name)}
+                        disabled={actionLoading}
+                        onClick={() => handleRespond(incident.id)}
                       >
-                        Accept & Respond
+                        {actionLoading ? 'Processing...' : 'Accept & Respond'}
                       </button>
                       <button className="btn btn-ghost btn-sm">Escalate</button>
                     </div>
@@ -151,12 +211,10 @@ export default function StaffPortal() {
                     <button 
                       className="btn btn-primary btn-sm" 
                       style={{flex: 1}}
-                      onClick={() => {
-                        updateIncidentStatus(task.id, 'resolved');
-                        updateStaffStatus(user.uid, 'available');
-                      }}
+                      disabled={actionLoading}
+                      onClick={() => handleComplete(task.id)}
                     >
-                      Mark Complete
+                      {actionLoading ? 'Processing...' : 'Mark Complete'}
                     </button>
                     <button className="btn btn-ghost btn-sm" style={{flex: 1}}>Update Status</button>
                   </div>
@@ -177,9 +235,9 @@ export default function StaffPortal() {
                   <div key={i} className={styles.zoneItem}>
                     <span className={styles.zoneName}>{zone}</span>
                     <div className={styles.zoneActions}>
-                      <button className={`${styles.zoneBtn} ${styles.zoneSafe}`}>✅ Safe</button>
-                      <button className={`${styles.zoneBtn} ${styles.zoneHazard}`}>⚠️ Hazard</button>
-                      <button className={`${styles.zoneBtn} ${styles.zoneEvac}`}>🚨 Evacuate</button>
+                      <button className={`${styles.zoneBtn} ${styles.zoneSafe}`} onClick={() => handleZoneCheck(zone, 'safe')}>✅ Safe</button>
+                      <button className={`${styles.zoneBtn} ${styles.zoneHazard}`} onClick={() => handleZoneCheck(zone, 'hazard')}>⚠️ Hazard</button>
+                      <button className={`${styles.zoneBtn} ${styles.zoneEvac}`} onClick={() => handleZoneCheck(zone, 'evacuate')}>🚨 Evacuate</button>
                     </div>
                   </div>
                 ))}

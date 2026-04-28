@@ -36,6 +36,38 @@ export default function CTASection() {
           </div>
         </div>
 
+        {/* Important Details / Highlights */}
+        <div className={`${styles.highlights} ${visible ? styles.visible : ''}`}>
+          <div className={styles.highlight}>
+            <div className={styles.hIcon}>🚀</div>
+            <div className={styles.hText}>
+              <h4>10s Response Time</h4>
+              <p>Average time from SOS trigger to first responder notification.</p>
+            </div>
+          </div>
+          <div className={styles.highlight}>
+            <div className={styles.hIcon}>🌍</div>
+            <div className={styles.hText}>
+              <h4>Global Infrastructure</h4>
+              <p>Powered by Google Cloud with 99.9% availability worldwide.</p>
+            </div>
+          </div>
+          <div className={styles.highlight}>
+            <div className={styles.hIcon}>🧠</div>
+            <div className={styles.hText}>
+              <h4>AI-Driven Triage</h4>
+              <p>Gemini AI automatically classifies and prioritizes incidents.</p>
+            </div>
+          </div>
+          <div className={styles.highlight}>
+            <div className={styles.hIcon}>📱</div>
+            <div className={styles.hText}>
+              <h4>Universal Access</h4>
+              <p>Full support for iOS, Android, and Desktop browsers.</p>
+            </div>
+          </div>
+        </div>
+
         {/* Final CTA */}
         <div className={`${styles.ctaBox} ${visible ? styles.visible : ''}`}>
           <div className={styles.ctaBg}></div>
@@ -43,7 +75,7 @@ export default function CTASection() {
             <h2>Protect Your Guests and Staff Today.</h2>
             <p>Deploy the world's most advanced crisis response platform in your venues within 48 hours.</p>
             <div className={styles.actions}>
-              <Link href="/report" className="btn btn-danger btn-lg">
+              <Link href="/login" className="btn btn-danger btn-lg">
                 Schedule a Demo
               </Link>
               <Link href="/login" className="btn btn-ghost btn-lg">

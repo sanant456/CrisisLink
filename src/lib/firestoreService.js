@@ -68,6 +68,10 @@ export async function updateStaffStatus(staffId, status) {
   await updateDoc(doc(db, 'users', staffId), { status });
 }
 
+export async function saveUserFCMToken(userId, token) {
+  await updateDoc(doc(db, 'users', userId), { fcmToken: token });
+}
+
 // === VENUE ===
 
 export async function getVenue(venueId) {
