@@ -4,6 +4,8 @@
 
 # 🚨 CrisisLink — Rapid Crisis Response Platform
 
+![CrisisLink Hero](public/assets/images/hero_visual.png)
+
 **Accelerated Emergency Response & Crisis Coordination in Hospitality**
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
@@ -30,13 +32,21 @@ Hospitality venues face **unpredictable, high-stakes emergencies** that demand i
 
 ## 💡 Our Solution
 
-**CrisisLink** is a real-time, web-based emergency coordination platform built for modern hospitality. It provides:
+**CrisisLink** is a real-time, web-based emergency coordination platform built for modern hospitality.
+
+![Command Center Mockup](public/assets/images/command_center.png)
+
+It provides:
 
 - **Instant Guest Reporting** — Guests report emergencies in 3 steps via mobile, no login required, accessible via QR codes
 - **AI-Powered Triage** — Gemini AI automatically classifies incident severity, suggests response protocols, and estimates response times
 - **Command Center** — Crisis Managers monitor all incidents in real time with live dashboards, staff status, and activity feeds
 - **Staff Mobile Portal** — On-site personnel receive instant alerts, manage assigned tasks, and check zone status
 - **Real-Time Synchronization** — Firebase Firestore powers live data flow across all stakeholders simultaneously
+
+<p align="center">
+  <img src="public/assets/images/guest_report.png" width="400" alt="Mobile Guest Report" />
+</p>
 
 ---
 
