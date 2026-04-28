@@ -5,6 +5,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  GithubAuthProvider,
   signOut as firebaseSignOut,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
@@ -142,6 +143,17 @@ export function AuthProvider({ children }) {
     setIsDemo(true);
   };
 
+  // Sign in with Github
+  const signInWithGithub = async () => {
+    if (isDemo) {
+      setUser({ uid: 'demo-user', email: 'demo@grandhorizon.com' });
+      setUserProfile(demoProfile);
+      return { user: demoProfile };
+    }
+    const provider = new GithubAuthProvider();
+    return signInWithPopup(auth, provider);
+  };
+
   const value = {
     user,
     userProfile,
@@ -149,6 +161,7 @@ export function AuthProvider({ children }) {
     isDemo,
     signIn,
     signInWithGoogle,
+    signInWithGithub,
     signUp,
     signOut,
     demoLogin,
