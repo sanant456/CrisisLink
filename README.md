@@ -253,7 +253,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 - [Next.js](https://nextjs.org/) — The React framework
 - [Firebase](https://firebase.google.com/) — Backend & real-time database
 - [Google Gemini AI](https://ai.google.dev/) — AI-powered incident analysis
-- [Vercel](https://vercel.com/) — Deployment platform
+- [Firebase Hosting](https://firebase.google.com/docs/hosting) — Deployment platform
 
 ---
 
