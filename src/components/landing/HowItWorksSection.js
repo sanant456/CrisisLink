@@ -5,31 +5,49 @@ import styles from './HowItWorksSection.module.css';
 const steps = [
   {
     step: '01',
-    title: 'Detect & Report',
-    description: 'Guest scans QR code in their room or taps the SOS button. Staff can report directly from their mobile interface. IoT sensors auto-detect anomalies.',
-    icon: '📱',
-    detail: 'No app download needed — works instantly via web browser',
+    title: 'Trigger SOS',
+    description: 'Press panic button or use mobile app to instantly trigger emergency alert with one tap.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      </svg>
+    ),
   },
   {
     step: '02',
-    title: 'AI Classification',
-    description: 'Gemini AI instantly analyzes the report, classifies severity, and identifies the optimal response protocol. Duplicate reports are automatically merged.',
-    icon: '🧠',
-    detail: 'Sub-second classification with 95%+ accuracy',
+    title: 'Capture Location',
+    description: 'System automatically captures precise GPS coordinates and indoor positioning data.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+    ),
   },
   {
     step: '03',
-    title: 'Smart Dispatch',
-    description: 'The right staff members are auto-alerted based on crisis type, proximity, and availability. Emergency services are notified for critical incidents.',
-    icon: '📡',
-    detail: 'Zone-based routing ensures nearest staff responds first',
+    title: 'Alert Responders',
+    description: 'All relevant staff, security, and emergency services receive instant notifications with full context.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M12 19v2"></path>
+        <path d="M12 3v2"></path>
+      </svg>
+    ),
   },
   {
     step: '04',
-    title: 'Coordinate & Resolve',
-    description: 'Real-time command dashboard enables crisis managers to coordinate response, track progress, manage evacuations, and communicate with all parties.',
-    icon: '🎯',
-    detail: 'Full incident timeline and post-incident analytics',
+    title: 'Resolve Incident',
+    description: 'Track response in real-time, coordinate actions, and automatically document the entire incident.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    ),
   },
 ];
 
@@ -50,10 +68,17 @@ export default function HowItWorksSection() {
     <section className={styles.section} id="how-it-works" ref={ref}>
       <div className="container">
         <div className={styles.header}>
-          <span className={styles.label}>HOW IT WORKS</span>
-          <h2 className={styles.title}>From incident to resolution in minutes</h2>
+          <span className={styles.label}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{marginRight: '6px', verticalAlign: 'middle'}}>
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+            Seamless workflow
+          </span>
+          <h2 className={styles.title}>How It Works</h2>
           <p className={styles.subtitle}>
-            A streamlined pipeline that eliminates communication gaps and accelerates response times.
+            From SOS to resolution in four seamless steps — designed for speed and simplicity.
           </p>
         </div>
 
@@ -61,25 +86,21 @@ export default function HowItWorksSection() {
           {steps.map((step, i) => (
             <div
               key={i}
-              className={`${styles.step} ${visible ? styles.visible : ''}`}
+              className={`${styles.stepCard} ${visible ? styles.visible : ''}`}
               style={{ animationDelay: `${i * 150}ms` }}
             >
-              <div className={styles.stepLeft}>
-                <div className={styles.stepNumber}>{step.step}</div>
-                {i < steps.length - 1 && <div className={styles.connector} />}
-              </div>
-              <div className={styles.stepContent}>
-                <div className={styles.stepIcon}>{step.icon}</div>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepDesc}>{step.description}</p>
-                <div className={styles.stepDetail}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                    <polyline points="22 4 12 14.01 9 11.01"/>
+              <div className={styles.stepBadge}>{step.step}</div>
+              <div className={styles.stepIconWrap}>{step.icon}</div>
+              <h3 className={styles.stepTitle}>{step.title}</h3>
+              <p className={styles.stepDesc}>{step.description}</p>
+              {i < steps.length - 1 && (
+                <div className={styles.connectorArrow}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
-                  {step.detail}
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>

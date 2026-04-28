@@ -20,12 +20,12 @@ export default function HeroSection() {
       <div className={`container ${styles.content} ${visible ? styles.visible : ''}`}>
         <div className={styles.badge}>
           <span className={styles.badgeDot} />
-          Google Solution Challenge 2026
+          Real-time Emergency Coordination Platform
         </div>
 
         <h1 className={styles.title}>
           <span className={styles.titleLine}>Crisis Response</span>
-          <span className={styles.titleGradient}>In Real Time.</span>
+          <span className="text-gradient">In Real Time.</span>
         </h1>
 
         <p className={styles.subtitle}>
@@ -34,32 +34,51 @@ export default function HeroSection() {
           when every second counts.
         </p>
 
+        <div className={styles.statsRow}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span className={styles.statText}>Trusted by <strong>50+ venues</strong></span>
+          <span className={styles.statDot}>•</span>
+          <span className={styles.statText}><strong>1,000+</strong> incidents handled</span>
+          <span className={styles.statDot}>•</span>
+          <span className={styles.statText}><strong>98%</strong> resolution rate</span>
+        </div>
+
         <div className={styles.actions}>
-          <Link href="/report" className={`btn btn-danger btn-lg ${styles.sosBtn}`}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
+          <Link href="/report" className="btn btn-danger btn-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px'}}>
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
             Report Emergency
           </Link>
-          <Link href="/dashboard" className="btn btn-primary btn-lg">
-            Open Dashboard
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
+          <Link href="/dashboard" className="btn btn-ghost btn-lg glass">
+            View Dashboard
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginLeft: '6px'}}>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
           </Link>
-        </div>
-
-        {/* Live mock indicator */}
-        <div className={styles.liveBar}>
-          <div className={styles.liveDot} />
-          <span>4 active incidents • 5 staff responding • 387 guests on-site</span>
         </div>
       </div>
 
       {/* Dashboard preview */}
-      <div className={`container ${styles.previewWrap} ${visible ? styles.visible : ''}`}>
+      <div className={`container-wide ${styles.previewWrap} ${visible ? styles.visible : ''}`}>
+        
+        <div className={styles.previewCenterText}>
+          <div className={styles.previewCommandBadge}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            Command center
+          </div>
+          <h2>Live Crisis Dashboard</h2>
+          <p>Monitor, coordinate, and resolve emergencies in real-time with our intuitive command center.</p>
+        </div>
+
         <div className={styles.preview}>
           <div className={styles.previewHeader}>
             <div className={styles.previewDots}>
@@ -67,59 +86,52 @@ export default function HeroSection() {
               <span style={{background: '#eab308'}} />
               <span style={{background: '#22c55e'}} />
             </div>
-            <span className={styles.previewTitle}>CrisisLink Command Center</span>
+            <div className={styles.mockUrlBar}>app.crisislink.io/dashboard</div>
+            <div className={styles.secureText}>
+              <span className={styles.secureDot} /> Secure
+            </div>
           </div>
           <div className={styles.previewBody}>
-            <div className={styles.previewSidebar}>
-              <div className={styles.previewNavItem} style={{background: 'rgba(59,130,246,0.2)', borderLeft: '2px solid #3b82f6'}}>
-                <span>📊</span> Dashboard
+            <div className={styles.previewCards}>
+              <div className={styles.previewCard}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.iconWrapGreen}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2">
+                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                  </div>
+                  <span className={styles.bigNumber}>4</span>
+                </div>
+                <div className={styles.cardTitle}>Active Incidents</div>
+                <div className={styles.cardMeta}><span className={styles.metaDotGreen} /> Live tracking</div>
               </div>
-              <div className={styles.previewNavItem}><span>🚨</span> Incidents</div>
-              <div className={styles.previewNavItem}><span>🗺️</span> Map</div>
-              <div className={styles.previewNavItem}><span>👥</span> Staff</div>
-              <div className={styles.previewNavItem}><span>📈</span> Analytics</div>
-            </div>
-            <div className={styles.previewMain}>
-              <div className={styles.previewCards}>
-                <div className={styles.previewCard} style={{borderTop: '2px solid #ef4444'}}>
-                  <div style={{fontSize: '11px', color: '#94a3b8'}}>Active Crises</div>
-                  <div style={{fontSize: '24px', fontWeight: '800', color: '#ef4444'}}>4</div>
+              <div className={styles.previewCard}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.iconWrapBlue}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                  </div>
+                  <span className={styles.bigNumber}>14</span>
                 </div>
-                <div className={styles.previewCard} style={{borderTop: '2px solid #f97316'}}>
-                  <div style={{fontSize: '11px', color: '#94a3b8'}}>Responding</div>
-                  <div style={{fontSize: '24px', fontWeight: '800', color: '#f97316'}}>5</div>
-                </div>
-                <div className={styles.previewCard} style={{borderTop: '2px solid #22c55e'}}>
-                  <div style={{fontSize: '11px', color: '#94a3b8'}}>Avg Response</div>
-                  <div style={{fontSize: '24px', fontWeight: '800', color: '#22c55e'}}>1:42</div>
-                </div>
-                <div className={styles.previewCard} style={{borderTop: '2px solid #3b82f6'}}>
-                  <div style={{fontSize: '11px', color: '#94a3b8'}}>Guests On-Site</div>
-                  <div style={{fontSize: '24px', fontWeight: '800', color: '#3b82f6'}}>387</div>
-                </div>
+                <div className={styles.cardTitle}>Staff Responders Online</div>
+                <div className={styles.cardMeta}><span className={styles.metaDotBlue} /> Real-time</div>
               </div>
-              <div className={styles.previewIncidents}>
-                <div className={styles.previewIncident}>
-                  <span className={styles.previewSeverity} style={{background: '#ef4444'}} />
-                  <div>
-                    <div style={{fontSize: '12px', fontWeight: '600'}}>🔥 Kitchen Fire — Building A</div>
-                    <div style={{fontSize: '10px', color: '#94a3b8'}}>Floor 1 • Responding • 2m ago</div>
+              <div className={styles.previewCard}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.iconWrapPurple}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2">
+                      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                      <polyline points="16 7 22 7 22 13"></polyline>
+                    </svg>
                   </div>
+                  <span className={styles.bigNumber}>156s</span>
                 </div>
-                <div className={styles.previewIncident}>
-                  <span className={styles.previewSeverity} style={{background: '#f97316'}} />
-                  <div>
-                    <div style={{fontSize: '12px', fontWeight: '600'}}>🏥 Medical Emergency — Room 412</div>
-                    <div style={{fontSize: '10px', color: '#94a3b8'}}>Floor 4 • Responding • 7m ago</div>
-                  </div>
-                </div>
-                <div className={styles.previewIncident}>
-                  <span className={styles.previewSeverity} style={{background: '#eab308'}} />
-                  <div>
-                    <div style={{fontSize: '12px', fontWeight: '600'}}>🛡️ Unauthorized Access — Parking B2</div>
-                    <div style={{fontSize: '10px', color: '#94a3b8'}}>Level B2 • Acknowledged • 15m ago</div>
-                  </div>
-                </div>
+                <div className={styles.cardTitle}>Avg Response Time</div>
+                <div className={styles.cardMeta}><span className={styles.metaDotPurple} /> Updated live</div>
               </div>
             </div>
           </div>

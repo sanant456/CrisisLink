@@ -38,16 +38,25 @@ export default function Navbar({ variant = 'landing' }) {
             <>
               <a href="#features" className={styles.link} onClick={() => setMenuOpen(false)}>Features</a>
               <a href="#how-it-works" className={styles.link} onClick={() => setMenuOpen(false)}>How It Works</a>
-              <a href="#sdg" className={styles.link} onClick={() => setMenuOpen(false)}>Impact</a>
+              <a href="#security" className={styles.link} onClick={() => setMenuOpen(false)}>Security</a>
+              <a href="#pricing" className={styles.link} onClick={() => setMenuOpen(false)}>Pricing</a>
             </>
           )}
-          <Link href="/report" className={`btn btn-danger btn-sm ${styles.sos}`} onClick={() => setMenuOpen(false)}>
-            <span className={styles.sosDot} />
-            Report Emergency
-          </Link>
-          <Link href="/login" className="btn btn-primary btn-sm" onClick={() => setMenuOpen(false)}>
-            Staff Login
-          </Link>
+          <div className={styles.authButtons}>
+            <Link href="/login" className={styles.signInBtn} onClick={() => setMenuOpen(false)}>
+              Sign In
+            </Link>
+            <Link href="/report" className="btn btn-danger btn-sm" onClick={() => setMenuOpen(false)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{marginRight: '4px'}}>
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              Report Emergency
+            </Link>
+            <Link href="/login" className="btn btn-ghost btn-sm" onClick={() => setMenuOpen(false)}>
+              Get Started
+            </Link>
+          </div>
         </div>
 
         <button 

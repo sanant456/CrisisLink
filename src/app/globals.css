@@ -7,25 +7,25 @@
 /* ---- CSS Custom Properties ---- */
 :root {
   /* Core palette */
-  --bg-primary: #0a0e17;
-  --bg-secondary: #111827;
-  --bg-tertiary: #1a2234;
-  --bg-card: rgba(17, 24, 39, 0.7);
-  --bg-glass: rgba(17, 24, 39, 0.5);
-  --bg-elevated: rgba(30, 41, 59, 0.6);
+  --bg-primary: #080B12;
+  --bg-secondary: #101524;
+  --bg-tertiary: #161B2E;
+  --bg-card: rgba(16, 21, 36, 0.7);
+  --bg-glass: rgba(16, 21, 36, 0.5);
+  --bg-elevated: rgba(22, 27, 46, 0.6);
 
   /* Text */
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-inverse: #0f172a;
+  --text-primary: #FFFFFF;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-inverse: #0F172A;
 
   /* Accent colors */
-  --accent-blue: #3b82f6;
+  --accent-blue: #3B82F6;
   --accent-blue-glow: rgba(59, 130, 246, 0.3);
-  --accent-cyan: #06b6d4;
-  --accent-purple: #8b5cf6;
-  --accent-indigo: #6366f1;
+  --accent-cyan: #06B6D4;
+  --accent-purple: #9D7BFF;
+  --accent-indigo: #6366F1;
 
   /* Status colors */
   --crisis-critical: #ef4444;
@@ -161,8 +161,8 @@ ul, ol {
   background: var(--bg-card);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
   padding: var(--space-6);
   transition: all var(--transition-base);
 }
@@ -172,15 +172,23 @@ ul, ol {
   box-shadow: var(--shadow-md);
 }
 
+.text-gradient {
+  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
 /* ---- Animated Background ---- */
 .bg-grid {
   position: fixed;
   inset: 0;
   z-index: -1;
   background-image:
-    radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.04) 0%, transparent 50%);
+    radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 100% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(239, 68, 68, 0.03) 0%, transparent 40%);
   pointer-events: none;
 }
 
@@ -234,14 +242,15 @@ ul, ol {
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, var(--crisis-critical), #dc2626);
+  background: linear-gradient(135deg, #FF0000, #CC0000);
   color: white;
-  box-shadow: var(--shadow-sm), 0 0 20px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 24px rgba(255, 0, 0, 0.4);
+  border-radius: var(--radius-lg);
 }
 
 .btn-danger:hover {
-  box-shadow: var(--shadow-md), var(--shadow-glow-red);
-  transform: translateY(-1px);
+  box-shadow: 0 0 32px rgba(255, 0, 0, 0.6);
+  transform: translateY(-2px);
 }
 
 .btn-ghost {
