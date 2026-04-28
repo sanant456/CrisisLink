@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import styles from './page.module.css';
-import { mockIncidents, mockStaff } from '@/lib/mockData';
+import { useIncidents, useStaff } from '@/hooks/useRealtimeData';
+import LiveMap from '@/components/dashboard/LiveMap';
 
 const floors = [
   { id: 12, label: 'Floor 12', zones: ['Penthouse Suite', 'Rooftop Bar'] },
@@ -24,8 +25,11 @@ export default function MapPage() {
   const [selectedFloor, setSelectedFloor] = useState(1);
   const currentFloor = floors.find(f => f.id === selectedFloor);
 
-  const floorIncidents = mockIncidents.filter(i => i.location.floor === selectedFloor);
-  const floorStaff = mockStaff.filter(s => s.floor === selectedFloor);
+  const { incidents } = useIncidents();
+  const { staff } = useStaff();
+
+  const floorIncidents = incidents.filter(i => i.location.floor === String(selectedFloor) || i.location.floor === selectedFloor);
+  const floorStaff = staff.filter(s => s.floor === selectedFloor);
 
   return (
     <div className={styles.page}>
@@ -93,27 +97,9 @@ export default function MapPage() {
             </div>
           </div>
 
-          {/* Floor Map Visualization */}
-          <div className={styles.floorMap}>
-            <div className={styles.mapGrid}>
-              {currentFloor?.zones.map((zone, i) => (
-                <div key={i} className={styles.mapZone}>
-                  <div className={styles.mapZoneLabel}>{zone}</div>
-                  {floorIncidents.filter(inc => inc.location.zone === zone).map((inc) => (
-                    <div key={inc.id} className={`${styles.mapIncident} ${styles[`map_${inc.severity}`]}`}>
-                      <span className={styles.mapIncidentPulse} />
-                      <span>🚨 {inc.type.toUpperCase()}</span>
-                    </div>
-                  ))}
-                  {floorStaff.filter(s => s.zone === zone).map((s) => (
-                    <div key={s.id} className={styles.mapStaff}>
-                      <span>{s.avatar}</span>
-                      <span>{s.name.split(' ')[0]}</span>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+          {/* Floor Map Visualization with Google Maps */}
+          <div className={styles.floorMap} style={{ padding: 0 }}>
+            <LiveMap incidents={incidents} staff={staff} />
           </div>
 
           {/* Active on this floor */}

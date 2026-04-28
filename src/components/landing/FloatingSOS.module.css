@@ -1,0 +1,70 @@
+.sosButton {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--crisis-critical);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4);
+  transition: all var(--transition-base);
+  animation: slide-in-right 0.6s ease-out;
+}
+
+.sosButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 48px rgba(239, 68, 68, 0.6);
+}
+
+.sosButton:active {
+  transform: scale(0.95);
+}
+
+.pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--crisis-critical);
+  opacity: 0.4;
+  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  z-index: -1;
+}
+
+.icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.text {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  margin-top: -2px;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .sosButton {
+    bottom: var(--space-6);
+    right: var(--space-6);
+    width: 64px;
+    height: 64px;
+  }
+}

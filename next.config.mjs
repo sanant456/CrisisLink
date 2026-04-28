@@ -9,7 +9,7 @@ const withPWA = nextPWA({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',     // Static export for Firebase Hosting (free, no server needed)
+  output: 'standalone', // Standalone mode for Cloud Run to enable API routes
   turbopack: {},        // Silence Turbopack/webpack conflict from next-pwa
 };
 

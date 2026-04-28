@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import styles from './layout.module.css';
 
 const navItems = [
@@ -14,7 +15,24 @@ const navItems = [
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, userProfile, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Protected route logic
+  if (!loading && !user) {
+    if (typeof window !== 'undefined') router.push('/login');
+    return <div className={styles.loadingScreen}>Redirecting to login...</div>;
+  }
+
+  if (!loading && userProfile?.role === 'guest') {
+    if (typeof window !== 'undefined') router.push('/report');
+    return <div className={styles.loadingScreen}>Unauthorized. Redirecting...</div>;
+  }
+
+  if (loading) {
+    return <div className={styles.loadingScreen}>Loading Command Center...</div>;
+  }
 
   return (
     <div className={styles.layout}>

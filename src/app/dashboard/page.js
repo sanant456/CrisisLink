@@ -20,6 +20,16 @@ export default function DashboardOverview() {
   const { activities } = useActivityLog();
 
   const activeIncidents = incidents.filter(i => i.status !== 'resolved');
+  const respondingStaff = staff.filter(s => s.status === 'responding').length;
+  
+  // Real-time stats calculations
+  const stats = {
+    activeIncidents: activeIncidents.length,
+    respondingStaff: respondingStaff,
+    totalStaff: staff.length,
+    guestsOnSite: 342, // Placeholder or fetch from venue
+    avgResponseTime: '4m 12s' // Placeholder or calculate
+  };
 
   return (
     <div className={styles.page}>
@@ -36,40 +46,34 @@ export default function DashboardOverview() {
       <div className={styles.statsGrid}>
         <div className={`${styles.statCard} ${styles.statCritical}`}>
           <div className={styles.statIcon}>🚨</div>
-          <div className={styles.statValue}>{mockStats.activeIncidents}</div>
+          <div className={styles.statValue}>{stats.activeIncidents}</div>
           <div className={styles.statLabel}>Active Incidents</div>
           <div className={styles.statTrend}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-            </svg>
-            +2 from yesterday
+            Live Monitoring
           </div>
         </div>
 
         <div className={`${styles.statCard} ${styles.statWarning}`}>
           <div className={styles.statIcon}>👥</div>
-          <div className={styles.statValue}>{mockStats.respondingStaff}</div>
+          <div className={styles.statValue}>{stats.respondingStaff}</div>
           <div className={styles.statLabel}>Staff Responding</div>
-          <div className={styles.statTrend}>of {mockStats.totalStaff} total</div>
+          <div className={styles.statTrend}>of {stats.totalStaff} total</div>
         </div>
 
         <div className={`${styles.statCard} ${styles.statSuccess}`}>
           <div className={styles.statIcon}>⚡</div>
-          <div className={styles.statValue}>{mockStats.avgResponseTime}</div>
+          <div className={styles.statValue}>{stats.avgResponseTime}</div>
           <div className={styles.statLabel}>Avg Response Time</div>
           <div className={styles.statTrend}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
-            </svg>
-            18% faster
+            Optimized
           </div>
         </div>
 
         <div className={`${styles.statCard} ${styles.statInfo}`}>
           <div className={styles.statIcon}>🏨</div>
-          <div className={styles.statValue}>{mockStats.guestsOnSite}</div>
+          <div className={styles.statValue}>{stats.guestsOnSite}</div>
           <div className={styles.statLabel}>Guests On-Site</div>
-          <div className={styles.statTrend}>of 450 capacity</div>
+          <div className={styles.statTrend}>Live Occupancy</div>
         </div>
       </div>
 
@@ -157,33 +161,20 @@ export default function DashboardOverview() {
             </div>
 
             <div className={styles.aiInsights}>
-              <div className={styles.aiCard}>
-                <div className={styles.aiCardIcon}>⚠️</div>
-                <div className={styles.aiCardContent}>
-                  <div className={styles.aiCardTitle}>High Alert: Kitchen Fire</div>
-                  <div className={styles.aiCardDesc}>
-                    Risk of fire spread to adjacent storage. Recommend sealing ventilation ducts in Zone A.
+              {incidents.filter(i => i.aiAnalysis).slice(0, 3).map((inc, idx) => (
+                <div key={inc.id || idx} className={styles.aiCard}>
+                  <div className={styles.aiCardIcon}>{inc.severity === 'critical' ? '🔴' : '⚠️'}</div>
+                  <div className={styles.aiCardContent}>
+                    <div className={styles.aiCardTitle}>AI Insight: {inc.title}</div>
+                    <div className={styles.aiCardDesc}>
+                      {inc.aiAnalysis.recommended_action || inc.aiAnalysis.summary}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className={styles.aiCard}>
-                <div className={styles.aiCardIcon}>📊</div>
-                <div className={styles.aiCardContent}>
-                  <div className={styles.aiCardTitle}>Pattern Detected</div>
-                  <div className={styles.aiCardDesc}>
-                    3 incidents in Building A today. Consider increasing patrol frequency.
-                  </div>
-                </div>
-              </div>
-              <div className={styles.aiCard}>
-                <div className={styles.aiCardIcon}>✅</div>
-                <div className={styles.aiCardContent}>
-                  <div className={styles.aiCardTitle}>Response Optimization</div>
-                  <div className={styles.aiCardDesc}>
-                    Medical team response improved 23% after repositioning to Floor 2.
-                  </div>
-                </div>
-              </div>
+              ))}
+              {incidents.filter(i => i.aiAnalysis).length === 0 && (
+                <div className={styles.aiEmpty}>No recent AI insights available.</div>
+              )}
             </div>
           </div>
         </div>

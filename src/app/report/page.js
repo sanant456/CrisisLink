@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { emergencyTypes } from '@/lib/mockData';
-import { analyzeIncident } from '@/lib/geminiService';
+import { createIncident, logActivity } from '@/lib/firestoreService';
 
 export default function ReportPage() {
   const [step, setStep] = useState(1);
@@ -16,6 +16,36 @@ export default function ReportPage() {
   const [incidentId, setIncidentId] = useState('');
   const [aiResult, setAiResult] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+
+  const toggleVoiceInput = () => {
+    if (typeof window === 'undefined') return;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser doesn't support voice recognition.");
+      return;
+    }
+
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setDescription(prev => prev ? `${prev} ${transcript}` : transcript);
+    };
+
+    recognition.start();
+  };
 
   const handleSubmit = async () => {
     const id = `INC-${String(Math.floor(Math.random() * 9000) + 1000)}`;
@@ -25,10 +55,49 @@ export default function ReportPage() {
 
     try {
       const locationStr = `${location.floor || 'Unknown floor'}, ${location.room || 'Unknown room'}`;
-      const analysis = await analyzeIncident(selectedType, description, locationStr);
-      setAiResult(analysis);
+      const fullDesc = `Type: ${selectedType}. ${description}. Location: ${locationStr}`;
+      
+      const response = await fetch('/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: fullDesc })
+      });
+      
+      let analysis = null;
+      if (response.ok) {
+        analysis = await response.json();
+        setAiResult(analysis);
+      }
+      
+      // Save to Firestore
+      const incidentData = {
+        type: selectedType,
+        title: analysis?.summary || `${selectedType} Report`,
+        description,
+        location: {
+          building: 'Main',
+          floor: location.floor || 'Unknown',
+          room: location.room || 'Unknown'
+        },
+        reporter: {
+          name: name || 'Anonymous',
+          phone: phone || 'Not provided'
+        },
+        severity: analysis?.severity || 'medium',
+        aiAnalysis: analysis
+      };
+      
+      const savedDoc = await createIncident(incidentData);
+      setIncidentId(savedDoc.id);
+      
+      await logActivity({
+        type: 'report',
+        event: `New ${analysis?.severity || 'medium'} severity incident reported`,
+        incidentId: savedDoc.id
+      });
+      
     } catch (err) {
-      console.error('AI analysis error:', err);
+      console.error('Submission error:', err);
     } finally {
       setAnalyzing(false);
     }
@@ -208,13 +277,24 @@ export default function ReportPage() {
             <div className={styles.form}>
               <div className={styles.field}>
                 <label className={styles.fieldLabel}>What is happening? *</label>
-                <textarea
-                  className="input"
-                  placeholder="Describe the emergency situation..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                />
+                <div className={styles.textareaWrapper}>
+                  <textarea
+                    className="input"
+                    placeholder="Describe the emergency situation..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={4}
+                  />
+                  <button 
+                    type="button"
+                    className={`${styles.micBtn} ${isListening ? styles.listening : ''}`}
+                    onClick={toggleVoiceInput}
+                    title="Voice SOS"
+                  >
+                    {isListening ? '🛑' : '🎤'}
+                  </button>
+                </div>
+                {isListening && <p className={styles.voiceHint}>Listening... Speak clearly into your microphone.</p>}
               </div>
 
               <div className={styles.fieldRow}>
