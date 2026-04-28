@@ -249,7 +249,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ## 🙏 Acknowledgements
 
-- [Google Solution Challenge 2026](https://developers.google.com/community/gdsc-solution-challenge)
+- Google Solution Challenge 2026
 - [Next.js](https://nextjs.org/) — The React framework
 - [Firebase](https://firebase.google.com/) — Backend & real-time database
 - [Google Gemini AI](https://ai.google.dev/) — AI-powered incident analysis
