@@ -12,10 +12,9 @@
 [![PWA](https://img.shields.io/badge/PWA-Ready-purple?style=for-the-badge)](https://web.dev/progressive-web-apps/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-> Built for the **Google Solution Challenge 2026** 🌍
-> Addressing UN Sustainable Development Goals: **SDG 3** (Good Health), **SDG 11** (Safe Cities), **SDG 16** (Peace & Justice)
+> Deployed on **Google Cloud Platform (Cloud Run)** for scalable, real-time emergency coordination
 
-[🌐 Live Demo](https://crisis-link-33b22.web.app) · [📖 Documentation](#getting-started) · [🐛 Report Bug](https://github.com/sanant456/CrisisLink/issues)
+[🌐 Live Demo](https://crisislink-3ekjm2mlba-uc.a.run.app) · [📖 Documentation](#getting-started) · [🐛 Report Bug](https://github.com/sanant456/CrisisLink/issues)
 
 </div>
 
@@ -46,7 +45,7 @@ Hospitality venues face **unpredictable, high-stakes emergencies** that demand i
 | Feature | Description |
 |--------|-------------|
 | 🚨 **Guest Reporting** | 3-step emergency wizard, no login needed, accessible via QR code |
-| 🤖 **Gemini AI Analysis** | Auto-classifies severity, suggests actions, estimates response time |
+| 🤖 **Gemini AI Analysis** | Multimodal triage using **Vertex AI** and **Vision AI** for visual hazard detection and severity classification |
 | 📊 **Command Center** | Real-time dashboard with incidents, staff status & activity feed |
 | 🗺️ **Venue Map** | Interactive floor plan with incident and staff location overlays |
 | 👥 **Staff Management** | Directory with live status, search, filters, and assignment |
@@ -68,7 +67,7 @@ Hospitality venues face **unpredictable, high-stakes emergencies** that demand i
 | **Auth** | Firebase Authentication (Email + Google Sign-In) |
 | **Database** | Firebase Firestore (Real-time) |
 | **Storage** | Firebase Storage |
-| **AI** | Google Gemini 2.0 Flash API |
+| **AI** | Vertex AI (Gemini 1.5 Flash), Vision AI, Gemini 2.0 Flash |
 | **PWA** | next-pwa (Service Workers) |
 | **Font** | Outfit (Google Fonts) |
 
@@ -196,19 +195,27 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. 🎉
 
 ---
 
-## 🌐 Deployment (Firebase Hosting)
+## 🌐 Deployment
 
-The project is configured for free static deployment via **Firebase Hosting**:
+CrisisLink is deployed across two Google Cloud services for maximum performance:
 
-1. Authenticate with Firebase CLI:
+### 1. Google Cloud Run (Full App)
+The primary application is containerized and deployed to **Google Cloud Run** for high-performance server-side rendering and API handling.
+
+1. **Build and Deploy via Script:**
    ```bash
-   firebase login
+   bash deploy.sh
    ```
-2. Build the static export (outputs to `out/`):
+2. The script builds the Docker image, pushes it to GCR, and deploys it to Cloud Run.
+
+### 2. Firebase Hosting (Static Assets)
+Static assets and the PWA bundle are optimized for delivery via **Firebase Hosting**.
+
+1. Build the static export:
    ```bash
    npm run build
    ```
-3. Deploy to Firebase:
+2. Deploy to Firebase:
    ```bash
    firebase deploy --only hosting
    ```
