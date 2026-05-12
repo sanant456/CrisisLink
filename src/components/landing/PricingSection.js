@@ -63,7 +63,7 @@ export default function PricingSection() {
               {plan.popular && <div className={styles.popularBadge}>Most Popular</div>}
               <h3 className={styles.planName}>{plan.name}</h3>
               <div className={styles.price}>
-                {plan.price !== 'Custom' && <span className={styles.currency}>$</span>}
+                {plan.price !== 'Custom' && <span className={styles.currency}>₹</span>}
                 <span className={styles.amount}>{plan.price}</span>
                 {plan.price !== 'Custom' && <span className={styles.period}>/mo</span>}
               </div>
