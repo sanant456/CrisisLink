@@ -16,7 +16,7 @@
 
 > Deployed on **Google Cloud Platform (Cloud Run)** for scalable, real-time emergency coordination
 
-[🌐 Live Demo](https://crisislink-3ekjm2mlba-uc.a.run.app) · [📖 Documentation](#getting-started) · [🐛 Report Bug](https://github.com/sanant456/CrisisLink/issues)
+[🌐 Live Demo](https://crisis-link-33b22.web.app) · [📖 Documentation](#getting-started) · [🐛 Report Bug](https://github.com/sanant456/CrisisLink/issues)
 
 </div>
 
